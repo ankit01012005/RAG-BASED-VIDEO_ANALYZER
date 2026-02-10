@@ -1,0 +1,1 @@
+client = OpenAI(API_KEY)

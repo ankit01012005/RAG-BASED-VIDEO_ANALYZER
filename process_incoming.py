@@ -3,9 +3,11 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 import joblib 
 import requests
+from openai import OpenAI
+from config import API_KEY 
 
 df = joblib.load('embeddings.joblib')
-
+# print(API_KEY)
 def create_embedding(text_list):
     # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
     r = requests.post("http://localhost:11434/api/embed", json={
@@ -29,6 +31,16 @@ def inference(prompt):
     response = r.json()
     # print(response)
     return response
+
+client = OpenAI(api_key=API_KEY)
+def inference_openAi(prompt):
+    response = client.responses.create(
+        model="gpt-5",
+        input=prompt
+    )
+    return response
+
+
 
 incoming_query = input("Ask a Question: ")
 question_embedding = create_embedding([incoming_query])[0] 
@@ -54,11 +66,14 @@ User asked this question related to the video chunks, you have to answer in a hu
 with open("prompt.txt", "w") as f:
     f.write(prompt)
 
-response = inference(prompt)["response"]
+# response = inference(prompt)["response"]
+
+response = inference_openAi(prompt)
+
 print(response)
 
 with open("response.txt", "w") as f:
-    f.write(response)
+    f.write(response.output_text)
 
 # for index,item in new_df.iterrows():
 #     print(index,item["title"],item['number'],item['text'],item['start'],item['end'])

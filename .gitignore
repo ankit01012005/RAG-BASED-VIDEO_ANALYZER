@@ -4,3 +4,7 @@ unused
 tedx_audios
 ./tedx_audios
 /tedx_audios
+
+config.py
+/config.py
+./config.py
